@@ -225,10 +225,64 @@ slots:
               template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}')"
     - component: BlockType
       config:
+        type: zdt_set_time
+        inputsInline: true
+        output: ZonedDateTime
+        message0: get a copy of %1 with time set to %2:%3:%4
+        colour: 90
+        tooltip: >
+          Returns a copy of this ZonedDateTime with the hour-of-day, minutes and seconds altered.
+
+          HH:mm:ss
+
+          Hours: 0-24
+
+          Minutes: 0-59
+
+          Seconds: 0-59
+
+          Requires: ZonedDateTime
+
+          Returns: ZonedDateTime
+        helpUrl: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/ZonedDateTime.html#withHour(int)
+        args0:
+          - name: DATE
+            type: input_value
+            check: ZonedDateTime
+          - name: HOURS
+            type: field_number
+            min: 0
+            max: 23
+            precision: 1
+            value: 13
+          - name: MINUTES
+            type: field_number
+            min: 0
+            max: 59
+            precision: 1
+            value: 30
+          - name: SECONDS
+            type: field_number
+            min: 0
+            max: 59
+            precision: 1
+      slots:
+        toolbox:
+          - component: PresetInput
+            config:
+              name: DATE
+              type: oh_zdt
+              shadow: true
+        code:
+          - component: BlockCodeTemplate
+            config:
+              template: "{{input:DATE}}.withHour({{field:HOURS}}).withMinute({{field:MINUTES}}).withSecond({{field:SECONDS}})"
+    - component: BlockType
+      config:
         type: add_magnitude_to_zdt
         inputsInline: true
         output: ZonedDateTime
-        message0: "%1 %2 %3 %4"
+        message0: "get a copy of %1 %2 %3 %4"
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the specified value added or subtracted. This block uses a floor operation on the provided value.
