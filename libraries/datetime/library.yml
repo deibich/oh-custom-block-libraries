@@ -571,6 +571,8 @@ slots:
             }
             try {
               return {{deibich_blockly_ZoneId}}.of(zoneIdString)
+            } catch(e) {
+            
             }
             return {{deibich_blockly_ZoneId}}.systemDefault()
           }
