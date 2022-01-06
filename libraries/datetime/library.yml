@@ -19,7 +19,7 @@ slots:
         tooltip: >
           Obtains the current date-time from the system clock in the default time-zone.
 
-          Returns: ZoneDateTime
+          Returns: ZonedDateTime
         helpUrl: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/ZonedDateTime.html#now()
       slots:
         code:
@@ -36,7 +36,6 @@ slots:
         colour: 90
         tooltip: >
           Get the ZonedDateTime from item's state.
-
 
           Requires: Item of type DateTime (No check if valid)
 
@@ -71,7 +70,6 @@ slots:
         tooltip: >
           Update state of a DateTime item to ZonedDateTime.
 
-
           Requires: DateTypeItem, ZonedDateTime
         helpUrl: ""
         args0:
@@ -98,8 +96,8 @@ slots:
         code:
           - component: BlockCodeTemplate
             config:
-              order: ORDER_ATOMIC
-              template: events.sendCommand({{input:ITEM}}, new {{utility:deibich_blockly_DateTimeType}}({{input:DATE}}))
+              template: >
+                events.sendCommand({{input:ITEM}}, new {{utility:deibich_blockly_DateTimeType}}({{input:DATE}}));
     - component: BlockType
       config:
         type: units_between_two_zdt
@@ -109,7 +107,6 @@ slots:
         colour: 230
         tooltip: >
           Calculates the amount of time between two ZonedDateTime objects. The result will be negative if the second object is before the first one.
-
 
           Requires: Two ZonedDateTime
 
@@ -159,11 +156,10 @@ slots:
         type: compare_zdt
         inputsInline: true
         output: Boolean
-        message0: "is %1 %2 %3 with resolution of %4"
+        message0: is %1 %2 %3 with resolution of %4
         colour: 210
         tooltip: >
           Checks if the instant of this date-time is before/after/equal that of the specified date-time.
-
 
           Requires: Two ZonedDateTime
 
@@ -258,7 +254,7 @@ slots:
           - name: MAGNITUDE
             type: field_dropdown
             options:
-              - - nanoseconds
+              - - nanos
                 - Nanos
               - - seconds
                 - Seconds
@@ -363,7 +359,7 @@ slots:
           - component: BlockCodeTemplate
             config:
               order: ORDER_ATOMIC
-              template: "{{input:DATE1}}.{{field:COMPONENT}}({{input:VALUE}})"
+              template: "{{input:DATE1}}.{{field:COMPONENT}}(Math.floor({{input:VALUE}}))"
     - component: BlockType
       config:
         type: get_zdt_component
@@ -516,9 +512,7 @@ slots:
       config:
         name: deibich_blockly_get_zdt_component_from_returned_value
         code: >
-          function {{name}}(value)
-
-          {
+          function {{name}}(value) {
             if(typeof value == 'number')
             {
               return value;
@@ -528,9 +522,8 @@ slots:
     - component: UtilityFunction
       config:
         name: deibich_blockly_compare_zdt_with_precision
-        code: |
-          function {{name}}(date1, date2, compareOp, precision)
-          {
+        code: >
+          function {{name}}(date1, date2, compareOp, precision) {
             switch (precision) {
               case 'years':
                 date2 = date2.withMonth(date1.getMonthValue());
@@ -553,5 +546,4 @@ slots:
               case 'Equal':
                 return date1.isEqual(date2);
             }
-            
           }
