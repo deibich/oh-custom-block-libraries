@@ -98,131 +98,9 @@ slots:
             config:
               template: >
                 events.sendCommand({{input:ITEM}}, new {{utility:deibich_blockly_DateTimeType}}({{input:DATE}}));
-    - component: BlockType
+    - component: Separator
       config:
-        type: units_between_two_zdt
-        inputsInline: true
-        output: Number
-        message0: "%1 between %2 and %3"
-        colour: 230
-        tooltip: >
-          Calculates the amount of time between two ZonedDateTime objects. The result will be negative if the second object is before the first one.
-
-          Requires: Two ZonedDateTime
-
-          Returns: Amount of selected units between both ZonedDateTimes
-        helpUrl: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/temporal/TemporalUnit.html#between(java.time.temporal.Temporal,java.time.temporal.Temporal)
-        args0:
-          - name: UNITS
-            type: field_dropdown
-            options:
-              - - seconds
-                - SECONDS
-              - - minutes
-                - MINUTES
-              - - hours
-                - HOURS
-              - - days
-                - DAYS
-          - name: DATE1
-            type: input_value
-            check: ZonedDateTime
-          - name: DATE2
-            type: input_value
-            check: ZonedDateTime
-      slots:
-        toolbox:
-          - component: PresetField
-            config:
-              name: UNITS
-              value: MINUTES
-          - component: PresetInput
-            config:
-              name: DATE1
-              shadow: true
-              type: oh_zdt
-          - component: PresetInput
-            config:
-              name: DATE2
-              shadow: true
-              type: oh_zdt
-        code:
-          - component: BlockCodeTemplate
-            config:
-              order: ORDER_ATOMIC
-              template: "{{utility:deibich_blockly_ChronoUnit}}.{{field:UNITS}}.between({{input:DATE1}}, {{input:DATE2}})"
-    - component: BlockType
-      config:
-        type: compare_zdt
-        inputsInline: true
-        output: Boolean
-        message0: is %1 %2 %3 with resolution of %4
-        colour: 210
-        tooltip: >
-          Checks if the instant of this date-time is before/after/equal that of the specified date-time.
-
-          Requires: Two ZonedDateTime
-
-          Returns: Amount of selected units between both ZonedDateTimes
-        helpUrl: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/chrono/ChronoZonedDateTime.html#isBefore(java.time.chrono.ChronoZonedDateTime)
-        args0:
-          - name: DATE1
-            type: input_value
-            check: ZonedDateTime
-          - name: COMPAREOP
-            type: field_dropdown
-            options:
-              - - before
-                - Before
-              - - equal to
-                - Equal
-              - - after
-                - After
-          - name: DATE2
-            type: input_value
-            check: ZonedDateTime
-          - name: PRECISION
-            type: field_dropdown
-            options:
-              - - years
-                - year
-              - - months
-                - months
-              - - days
-                - after
-              - - hours
-                - hours
-              - - minutes
-                - minutes
-              - - seconds
-                - seconds
-              - - nanos
-                - nanos
-      slots:
-        toolbox:
-          - component: PresetField
-            config:
-              name: COMPAREOP
-              value: Before
-          - component: PresetInput
-            config:
-              name: DATE1
-              shadow: true
-              type: oh_zdt
-          - component: PresetInput
-            config:
-              name: DATE2
-              shadow: true
-              type: oh_zdt
-          - component: PresetField
-            config:
-              name: PRECISION
-              value: seconds
-        code:
-          - component: BlockCodeTemplate
-            config:
-              order: ORDER_ATOMIC
-              template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}')"
+        gap: 50
     - component: BlockType
       config:
         type: zdt_set_time
@@ -282,7 +160,7 @@ slots:
         type: add_magnitude_to_zdt
         inputsInline: true
         output: ZonedDateTime
-        message0: "get a copy of %1 %2 %3 %4"
+        message0: get a copy of %1 %2 %3 %4
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the specified value added or subtracted. This block uses a floor operation on the provided value.
@@ -414,6 +292,84 @@ slots:
             config:
               order: ORDER_ATOMIC
               template: "{{input:DATE1}}.{{field:COMPONENT}}(Math.floor({{input:VALUE}}))"
+    - component: Separator
+      config:
+        gap: 50
+    - component: BlockType
+      config:
+        type: compare_zdt
+        inputsInline: true
+        output: Boolean
+        message0: is %1 %2 %3 with resolution of %4
+        colour: 210
+        tooltip: >
+          Checks if the instant of this date-time is before/after/equal that of the specified date-time.
+
+          Requires: Two ZonedDateTime
+
+          Returns: Amount of selected units between both ZonedDateTimes
+        helpUrl: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/chrono/ChronoZonedDateTime.html#isBefore(java.time.chrono.ChronoZonedDateTime)
+        args0:
+          - name: DATE1
+            type: input_value
+            check: ZonedDateTime
+          - name: COMPAREOP
+            type: field_dropdown
+            options:
+              - - before
+                - Before
+              - - equal to
+                - Equal
+              - - after
+                - After
+          - name: DATE2
+            type: input_value
+            check: ZonedDateTime
+          - name: PRECISION
+            type: field_dropdown
+            options:
+              - - years
+                - year
+              - - months
+                - months
+              - - days
+                - after
+              - - hours
+                - hours
+              - - minutes
+                - minutes
+              - - seconds
+                - seconds
+              - - nanos
+                - nanos
+      slots:
+        toolbox:
+          - component: PresetField
+            config:
+              name: COMPAREOP
+              value: Before
+          - component: PresetInput
+            config:
+              name: DATE1
+              shadow: true
+              type: oh_zdt
+          - component: PresetInput
+            config:
+              name: DATE2
+              shadow: true
+              type: oh_zdt
+          - component: PresetField
+            config:
+              name: PRECISION
+              value: seconds
+        code:
+          - component: BlockCodeTemplate
+            config:
+              order: ORDER_ATOMIC
+              template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}')"
+    - component: Separator
+      config:
+        gap: 50
     - component: BlockType
       config:
         type: get_zdt_component
@@ -487,6 +443,62 @@ slots:
             config:
               order: ORDER_ATOMIC
               template: "{{utility:deibich_blockly_get_zdt_component_from_returned_value}}({{input:DATE1}}.{{field:COMPONENT}}())"
+    - component: BlockType
+      config:
+        type: units_between_two_zdt
+        inputsInline: true
+        output: Number
+        message0: "%1 between %2 and %3"
+        colour: 230
+        tooltip: >
+          Calculates the amount of time between two ZonedDateTime objects. The result will be negative if the second object is before the first one.
+
+          Requires: Two ZonedDateTime
+
+          Returns: Amount of selected units between both ZonedDateTimes
+        helpUrl: https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/temporal/TemporalUnit.html#between(java.time.temporal.Temporal,java.time.temporal.Temporal)
+        args0:
+          - name: UNITS
+            type: field_dropdown
+            options:
+              - - seconds
+                - SECONDS
+              - - minutes
+                - MINUTES
+              - - hours
+                - HOURS
+              - - days
+                - DAYS
+          - name: DATE1
+            type: input_value
+            check: ZonedDateTime
+          - name: DATE2
+            type: input_value
+            check: ZonedDateTime
+      slots:
+        toolbox:
+          - component: PresetField
+            config:
+              name: UNITS
+              value: MINUTES
+          - component: PresetInput
+            config:
+              name: DATE1
+              shadow: true
+              type: oh_zdt
+          - component: PresetInput
+            config:
+              name: DATE2
+              shadow: true
+              type: oh_zdt
+        code:
+          - component: BlockCodeTemplate
+            config:
+              order: ORDER_ATOMIC
+              template: "{{utility:deibich_blockly_ChronoUnit}}.{{field:UNITS}}.between({{input:DATE1}}, {{input:DATE2}})"
+    - component: Separator
+      config:
+        gap: 100
     - component: BlockType
       config:
         type: get_zoneid_from_string
