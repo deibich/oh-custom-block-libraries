@@ -11,7 +11,7 @@ slots:
   blocks:
     - component: BlockType
       config:
-        type: zdt_now
+        type: get_zdt_now
         inputsInline: true
         output: ZonedDateTime
         message0: now
@@ -63,7 +63,7 @@ slots:
       config:
         type: set_datetime_item_state_to_zdt
         inputsInline: true
-        message0: set item %1 to ZonedDateTime %2
+        message0: set item %1 to ZDT %2
         previousStatement: ""
         nextStatement: ""
         colour: 0
@@ -103,20 +103,16 @@ slots:
         gap: 50
     - component: BlockType
       config:
-        type: zdt_set_time
+        type: zdt_set_time_with_fields
         inputsInline: true
         output: ZonedDateTime
-        message0: get a copy of %1 with time set to %2:%3:%4
+        message0: copy of %1 with time set to %2:%3:%4
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the hour-of-day, minutes and seconds altered.
 
-          HH:mm:ss
-
           Hours: 0-24
-
           Minutes: 0-59
-
           Seconds: 0-59
 
           Requires: ZonedDateTime
@@ -157,10 +153,10 @@ slots:
               template: "{{input:DATE}}.withHour({{field:HOURS}}).withMinute({{field:MINUTES}}).withSecond({{field:SECONDS}})"
     - component: BlockType
       config:
-        type: add_magnitude_to_zdt
+        type: zdt_add_unit_to_zdt
         inputsInline: true
         output: ZonedDateTime
-        message0: get a copy of %1 %2 %3 %4
+        message0: copy of %1 %2 %3 %4
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the specified value added or subtracted. This block uses a floor operation on the provided value.
@@ -183,7 +179,7 @@ slots:
           - name: VALUE
             type: input_value
             check: Number
-          - name: MAGNITUDE
+          - name: UNIT
             type: field_dropdown
             options:
               - - nanos
@@ -210,7 +206,7 @@ slots:
               value: plus
           - component: PresetField
             config:
-              name: MAGNITUDE
+              name: UNIT
               value: Minutes
           - component: PresetInput
             config:
@@ -228,13 +224,13 @@ slots:
           - component: BlockCodeTemplate
             config:
               order: ORDER_ATOMIC
-              template: "{{input:ZDT}}.{{field:OPERAND}}{{field:MAGNITUDE}}(Math.floor({{input:VALUE}}))"
+              template: "{{input:ZDT}}.{{field:OPERAND}}{{field:UNIT}}(Math.floor({{input:VALUE}}))"
     - component: BlockType
       config:
-        type: get_zdt_altered
+        type: get_zdt_with_altered_unit
         inputsInline: true
         output: ZonedDateTime
-        message0: get a copy of %1 with %2 altered to %3
+        message0: copy of %1 with %2 altered to %3
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the selected field altered. This block uses a floor operation on the provided value. Does not check if the provided value is valid.
@@ -297,7 +293,7 @@ slots:
         gap: 50
     - component: BlockType
       config:
-        type: compare_zdt
+        type: compare_zdt_with_zdt
         inputsInline: true
         output: Boolean
         message0: is %1 %2 %3 with resolution of %4
@@ -375,10 +371,10 @@ slots:
         type: get_zdt_component
         inputsInline: true
         output: Number
-        message0: get %1 from %2
+        message0: %1 from %2
         colour: 230
         tooltip: >
-          Gets the selected field as Number.
+          Returns the selected field as Number.
 
           nano: 0 to 0 to 999999999
 
