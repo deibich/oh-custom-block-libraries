@@ -31,7 +31,7 @@ second: 0 to 59
 
 
 ### ZDT from item \<item\>
-Get the ZonedDateTime from item's state.
+Get the ZonedDateTime from item's state. Error if item is undef/NULL.
 
 ![get_zdt_from_oh_item](images/get_zdt_from_oh_item.png)
 
