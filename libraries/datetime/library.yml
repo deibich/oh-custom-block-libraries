@@ -34,15 +34,22 @@ slots:
         output: ZonedDateTime
         message0: ZDT with date %1-%2-%3 and time %4:%5:%6
         colour: 90
-        tooltip: |
+        tooltip: >
           Creates a ZonedDateTime based on the given input for date and time with nanos set to 0 and the system's time-zone. Values must be valid.
-          
+
+
           year: the year  
+
           month: 1 to 12  
+
           day: 1 to 28-31  
+
           hour: 0 to 23  
+
           minute: 0 to 59  
+
           second: 0 to 59
+
 
           Returns: ZonedDateTime
         helpUrl: ""
@@ -87,7 +94,7 @@ slots:
         code:
           - component: BlockCodeTemplate
             config:
-              template: "1"
+              template: "{{utility:blockly_deibich_create_zdt_from_components}}({{field:YEAR}}, {{field:MONTH}}, {{field:DAY}}, {{field:HOUR}}, {{field:MINUTE}}, {{field:SECOND}}, 0, {{utility:deibich_blockly_ZonedDateTime}}.now().getOffset().getId(), {{utility:deibich_blockly_ZonedDateTime}}.now().getZone().getId())"
     - component: BlockType
       config:
         type: get_zdt_from_oh_item
@@ -172,9 +179,7 @@ slots:
         tooltip: >
           Returns a copy of this ZonedDateTime with the hour-of-day, minutes and seconds altered.
 
-          Hours: 0-24
-          Minutes: 0-59
-          Seconds: 0-59
+          Hours: 0-24 Minutes: 0-59 Seconds: 0-59
 
           Requires: ZonedDateTime
 
@@ -432,7 +437,7 @@ slots:
         type: get_zdt_component
         inputsInline: true
         output: Number
-        message0: %1 from %2
+        message0: "%1 from %2"
         colour: 230
         tooltip: >
           Returns the selected field as Number.
@@ -615,6 +620,10 @@ slots:
         javaClass: java.time.ZoneId
     - component: UtilityJavaType
       config:
+        name: deibich_blockly_DateTimeFormatter
+        javaClass: java.time.format.DateTimeFormatter
+    - component: UtilityJavaType
+      config:
         name: deibich_blockly_DateTimeType
         javaClass: org.openhab.core.library.types.DateTimeType
     - component: UtilityFunction
@@ -624,14 +633,14 @@ slots:
           function {{name}}(zoneIdString) {
             if(typeof zoneIdString !== 'string')
             {
-              zoneIdString = ''
+              zoneIdString = '';
             }
             try {
               return {{deibich_blockly_ZoneId}}.of(zoneIdString)
             } catch(e) {
             
             }
-            return {{deibich_blockly_ZoneId}}.systemDefault()
+            return {{deibich_blockly_ZoneId}}.systemDefault();
           }
     - component: UtilityFunction
       config:
@@ -671,4 +680,20 @@ slots:
               case 'Equal':
                 return date1.isEqual(date2);
             }
+          }
+    - component: UtilityFunction
+      config:
+        name: blockly_deibich_create_zdt_from_components
+        code: >
+          function {{name}} (year, month, day, hour, minute, second, nano, offsetString, timezoneString)
+          {
+            stringToParse = '' + year;
+            stringToParse += '-' + ('0' + month).slice(-2);
+            stringToParse += '-' + ('0' + day).slice(-2);
+            stringToParse += 'T'+('0' + hour).slice(-2);
+            stringToParse += ':' + ('0' + minute).slice(-2);
+            stringToParse += ':' + ('0' + second).slice(-2);
+            stringToParse += '.' +nano + offsetString + '[' + timezoneString + ']';
+            
+            return {{deibich_blockly_ZonedDateTime}}.parse(stringToParse, {{deibich_blockly_DateTimeFormatter}}.ISO_ZONED_DATE_TIME);
           }
