@@ -523,6 +523,8 @@ slots:
           - name: UNITS
             type: field_dropdown
             options:
+              - - nanos
+                - NANOS
               - - seconds
                 - SECONDS
               - - minutes
@@ -531,6 +533,10 @@ slots:
                 - HOURS
               - - days
                 - DAYS
+              - - weeks
+                - WEEKS
+              - - months
+                - MONTHS
           - name: DATE1
             type: input_value
             check: ZonedDateTime
