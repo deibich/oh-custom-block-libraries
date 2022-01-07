@@ -59,7 +59,7 @@ Returns a copy of the provided ZonedDateTime with the selected field altered.
 
 ![get_zdt_with_altered_unit](images/get_zdt_with_altered_unit.png)
 
-### is \<zdt1\> before/after/equal \<zdt2\> with resolution of \<datetime_unit\>
+### is \<zdt1\> before/after/equal \<zdt2\> use date and time/date/time with resolution of \<datetime_unit\>
 Checks if the instant of the first ZonedDateTime is before/after/equal that of the second ZonedDateTime.
 
 ![compare_zdt_with_zdt](images/compare_zdt_with_zdt.png)

@@ -362,7 +362,7 @@ slots:
         type: compare_zdt_with_zdt
         inputsInline: true
         output: Boolean
-        message0: is %1 %2 %3 with resolution of %4
+        message0: "is %1 %2 %3 use %5 with resolution of %4"
         colour: 210
         tooltip: >
           Checks if the instant of this date-time is before/after/equal that of the specified date-time.
@@ -404,6 +404,15 @@ slots:
                 - seconds
               - - nanos
                 - nanos
+          - name: COMP_DATETIME
+            type: field_dropdown
+            options:
+              - - date and time
+                - 'dateandtime'
+              - - date
+                - 'date'
+              - - time
+                - 'time'
       slots:
         toolbox:
           - component: PresetField
@@ -428,7 +437,7 @@ slots:
           - component: BlockCodeTemplate
             config:
               order: ORDER_ATOMIC
-              template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}')"
+              template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}', '{{field:COMP_DATETIME}}')"
     - component: Separator
       config:
         gap: 50
@@ -663,7 +672,7 @@ slots:
       config:
         name: deibich_blockly_compare_zdt_with_precision
         code: >
-          function {{name}}(date1, date2, compareOp, precision) {
+          function {{name}}(date1, date2, compareOp, precision, compDate) {
             switch (precision) {
               case 'years':
                 date2 = date2.withMonth(date1.getMonthValue());
@@ -677,6 +686,14 @@ slots:
                 date2 = date2.withSecond(date1.getSecond());
               case 'seconds':
                 date2 = date2.withNano(date1.getNano());
+            }
+            if(compDate === 'date') {
+              date1 = date1.toLocalDate();
+              date2 = date2.toLocalDate();
+            } else if(compDate === 'time')
+            {
+              date1 = date1.toLocalTime();
+              date2 = date2.toLocalTime();
             }
             switch (compareOp) {
               case 'Before':
