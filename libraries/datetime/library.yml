@@ -29,10 +29,71 @@ slots:
               template: "{{utility:deibich_blockly_ZonedDateTime}}.now()"
     - component: BlockType
       config:
-        type: get_zdt_from_item
+        type: get_zdt_from_date_and_time_fields
         inputsInline: true
         output: ZonedDateTime
-        message0: Get ZonedDateTime from item %1
+        message0: ZDT with date %1-%2-%3 and time %4:%5:%6
+        colour: 90
+        tooltip: |
+          Creates a ZonedDateTime based on the given input for date and time with nanos set to 0 and the system's time-zone. Values must be valid.
+          
+          year: the year  
+          month: 1 to 12  
+          day: 1 to 28-31  
+          hour: 0 to 23  
+          minute: 0 to 59  
+          second: 0 to 59
+
+          Returns: ZonedDateTime
+        helpUrl: ""
+        args0:
+          - name: YEAR
+            type: field_number
+            min: 1970
+            max: 999999999
+            precision: 1
+            value: 2022
+          - name: MONTH
+            type: field_number
+            min: 1
+            max: 12
+            precision: 1
+            value: 1
+          - name: DAY
+            type: field_number
+            min: 1
+            max: 31
+            precision: 1
+            value: 15
+          - name: HOUR
+            type: field_number
+            min: 0
+            max: 23
+            precision: 1
+            value: 13
+          - name: MINUTE
+            type: field_number
+            min: 0
+            max: 59
+            precision: 1
+            value: 30
+          - name: SECOND
+            type: field_number
+            min: 0
+            max: 59
+            precision: 1
+            value: 0
+      slots:
+        code:
+          - component: BlockCodeTemplate
+            config:
+              template: "1"
+    - component: BlockType
+      config:
+        type: get_zdt_from_oh_item
+        inputsInline: true
+        output: ZonedDateTime
+        message0: ZDT from item %1
         colour: 90
         tooltip: >
           Get the ZonedDateTime from item's state.
