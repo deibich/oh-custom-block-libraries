@@ -11,7 +11,7 @@ slots:
   blocks:
     - component: BlockType
       config:
-        type: zdt_now
+        type: get_zdt_now
         inputsInline: true
         output: ZonedDateTime
         message0: now
@@ -29,10 +29,78 @@ slots:
               template: "{{utility:deibich_blockly_ZonedDateTime}}.now()"
     - component: BlockType
       config:
-        type: get_zdt_from_item
+        type: get_zdt_from_date_and_time_fields
         inputsInline: true
         output: ZonedDateTime
-        message0: Get ZonedDateTime from item %1
+        message0: ZDT with date %1-%2-%3 and time %4:%5:%6
+        colour: 90
+        tooltip: >
+          Creates a ZonedDateTime based on the given input for date and time with nanos set to 0 and the system's time-zone. Values must be valid.
+
+
+          year: the year  
+
+          month: 1 to 12  
+
+          day: 1 to 28-31  
+
+          hour: 0 to 23  
+
+          minute: 0 to 59  
+
+          second: 0 to 59
+
+
+          Returns: ZonedDateTime
+        helpUrl: ""
+        args0:
+          - name: YEAR
+            type: field_number
+            min: 1970
+            max: 999999999
+            precision: 1
+            value: 2022
+          - name: MONTH
+            type: field_number
+            min: 1
+            max: 12
+            precision: 1
+            value: 1
+          - name: DAY
+            type: field_number
+            min: 1
+            max: 31
+            precision: 1
+            value: 15
+          - name: HOUR
+            type: field_number
+            min: 0
+            max: 23
+            precision: 1
+            value: 13
+          - name: MINUTE
+            type: field_number
+            min: 0
+            max: 59
+            precision: 1
+            value: 30
+          - name: SECOND
+            type: field_number
+            min: 0
+            max: 59
+            precision: 1
+            value: 0
+      slots:
+        code:
+          - component: BlockCodeTemplate
+            config:
+              template: "{{utility:blockly_deibich_create_zdt_from_components}}({{field:YEAR}}, {{field:MONTH}}, {{field:DAY}}, {{field:HOUR}}, {{field:MINUTE}}, {{field:SECOND}}, 0, {{utility:deibich_blockly_ZonedDateTime}}.now().getOffset().getId(), {{utility:deibich_blockly_ZonedDateTime}}.now().getZone().getId())"
+    - component: BlockType
+      config:
+        type: get_zdt_from_oh_item
+        inputsInline: true
+        output: ZonedDateTime
+        message0: ZDT from item %1
         colour: 90
         tooltip: >
           Get the ZonedDateTime from item's state.
@@ -63,7 +131,7 @@ slots:
       config:
         type: set_datetime_item_state_to_zdt
         inputsInline: true
-        message0: set item %1 to ZonedDateTime %2
+        message0: set item %1 to ZDT %2
         previousStatement: ""
         nextStatement: ""
         colour: 0
@@ -103,21 +171,15 @@ slots:
         gap: 50
     - component: BlockType
       config:
-        type: zdt_set_time
+        type: zdt_set_time_with_fields
         inputsInline: true
         output: ZonedDateTime
-        message0: get a copy of %1 with time set to %2:%3:%4
+        message0: copy of %1 with time set to %2:%3:%4
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the hour-of-day, minutes and seconds altered.
 
-          HH:mm:ss
-
-          Hours: 0-24
-
-          Minutes: 0-59
-
-          Seconds: 0-59
+          Hours: 0-24 Minutes: 0-59 Seconds: 0-59
 
           Requires: ZonedDateTime
 
@@ -157,10 +219,10 @@ slots:
               template: "{{input:DATE}}.withHour({{field:HOURS}}).withMinute({{field:MINUTES}}).withSecond({{field:SECONDS}})"
     - component: BlockType
       config:
-        type: add_magnitude_to_zdt
+        type: zdt_add_unit_to_zdt
         inputsInline: true
         output: ZonedDateTime
-        message0: get a copy of %1 %2 %3 %4
+        message0: copy of %1 %2 %3 %4
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the specified value added or subtracted. This block uses a floor operation on the provided value.
@@ -183,7 +245,7 @@ slots:
           - name: VALUE
             type: input_value
             check: Number
-          - name: MAGNITUDE
+          - name: UNIT
             type: field_dropdown
             options:
               - - nanos
@@ -210,7 +272,7 @@ slots:
               value: plus
           - component: PresetField
             config:
-              name: MAGNITUDE
+              name: UNIT
               value: Minutes
           - component: PresetInput
             config:
@@ -228,13 +290,13 @@ slots:
           - component: BlockCodeTemplate
             config:
               order: ORDER_ATOMIC
-              template: "{{input:ZDT}}.{{field:OPERAND}}{{field:MAGNITUDE}}(Math.floor({{input:VALUE}}))"
+              template: "{{input:ZDT}}.{{field:OPERAND}}{{field:UNIT}}(Math.floor({{input:VALUE}}))"
     - component: BlockType
       config:
-        type: get_zdt_altered
+        type: get_zdt_with_altered_unit
         inputsInline: true
         output: ZonedDateTime
-        message0: get a copy of %1 with %2 altered to %3
+        message0: copy of %1 with %2 altered to %3
         colour: 90
         tooltip: >
           Returns a copy of this ZonedDateTime with the selected field altered. This block uses a floor operation on the provided value. Does not check if the provided value is valid.
@@ -297,10 +359,10 @@ slots:
         gap: 50
     - component: BlockType
       config:
-        type: compare_zdt
+        type: compare_zdt_with_zdt
         inputsInline: true
         output: Boolean
-        message0: is %1 %2 %3 with resolution of %4
+        message0: "is %1 %2 %3 use %5 with resolution of %4"
         colour: 210
         tooltip: >
           Checks if the instant of this date-time is before/after/equal that of the specified date-time.
@@ -342,6 +404,15 @@ slots:
                 - seconds
               - - nanos
                 - nanos
+          - name: COMP_DATETIME
+            type: field_dropdown
+            options:
+              - - date and time
+                - 'dateandtime'
+              - - date
+                - 'date'
+              - - time
+                - 'time'
       slots:
         toolbox:
           - component: PresetField
@@ -366,7 +437,7 @@ slots:
           - component: BlockCodeTemplate
             config:
               order: ORDER_ATOMIC
-              template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}')"
+              template: "{{utility:deibich_blockly_compare_zdt_with_precision}}({{input:DATE1}}, {{input:DATE2}}, '{{field:COMPAREOP}}', '{{field:PRECISION}}', '{{field:COMP_DATETIME}}')"
     - component: Separator
       config:
         gap: 50
@@ -375,10 +446,10 @@ slots:
         type: get_zdt_component
         inputsInline: true
         output: Number
-        message0: get %1 from %2
+        message0: "%1 from %2"
         colour: 230
         tooltip: >
-          Gets the selected field as Number.
+          Returns the selected field as Number.
 
           nano: 0 to 0 to 999999999
 
@@ -461,6 +532,8 @@ slots:
           - name: UNITS
             type: field_dropdown
             options:
+              - - nanos
+                - NANOS
               - - seconds
                 - SECONDS
               - - minutes
@@ -469,6 +542,10 @@ slots:
                 - HOURS
               - - days
                 - DAYS
+              - - weeks
+                - WEEKS
+              - - months
+                - MONTHS
           - name: DATE1
             type: input_value
             check: ZonedDateTime
@@ -558,6 +635,10 @@ slots:
         javaClass: java.time.ZoneId
     - component: UtilityJavaType
       config:
+        name: deibich_blockly_DateTimeFormatter
+        javaClass: java.time.format.DateTimeFormatter
+    - component: UtilityJavaType
+      config:
         name: deibich_blockly_DateTimeType
         javaClass: org.openhab.core.library.types.DateTimeType
     - component: UtilityFunction
@@ -567,14 +648,14 @@ slots:
           function {{name}}(zoneIdString) {
             if(typeof zoneIdString !== 'string')
             {
-              zoneIdString = ''
+              zoneIdString = '';
             }
             try {
               return {{deibich_blockly_ZoneId}}.of(zoneIdString)
             } catch(e) {
             
             }
-            return {{deibich_blockly_ZoneId}}.systemDefault()
+            return {{deibich_blockly_ZoneId}}.systemDefault();
           }
     - component: UtilityFunction
       config:
@@ -591,7 +672,7 @@ slots:
       config:
         name: deibich_blockly_compare_zdt_with_precision
         code: >
-          function {{name}}(date1, date2, compareOp, precision) {
+          function {{name}}(date1, date2, compareOp, precision, compDate) {
             switch (precision) {
               case 'years':
                 date2 = date2.withMonth(date1.getMonthValue());
@@ -606,6 +687,14 @@ slots:
               case 'seconds':
                 date2 = date2.withNano(date1.getNano());
             }
+            if(compDate === 'date') {
+              date1 = date1.toLocalDate();
+              date2 = date2.toLocalDate();
+            } else if(compDate === 'time')
+            {
+              date1 = date1.toLocalTime();
+              date2 = date2.toLocalTime();
+            }
             switch (compareOp) {
               case 'Before':
                 return date1.isBefore(date2);
@@ -614,4 +703,20 @@ slots:
               case 'Equal':
                 return date1.isEqual(date2);
             }
+          }
+    - component: UtilityFunction
+      config:
+        name: blockly_deibich_create_zdt_from_components
+        code: >
+          function {{name}} (year, month, day, hour, minute, second, nano, offsetString, timezoneString)
+          {
+            stringToParse = '' + year;
+            stringToParse += '-' + ('0' + month).slice(-2);
+            stringToParse += '-' + ('0' + day).slice(-2);
+            stringToParse += 'T'+('0' + hour).slice(-2);
+            stringToParse += ':' + ('0' + minute).slice(-2);
+            stringToParse += ':' + ('0' + second).slice(-2);
+            stringToParse += '.' +nano + offsetString + '[' + timezoneString + ']';
+            
+            return {{deibich_blockly_ZonedDateTime}}.parse(stringToParse, {{deibich_blockly_DateTimeFormatter}}.ISO_ZONED_DATE_TIME);
           }
